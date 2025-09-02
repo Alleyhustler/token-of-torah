@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token of Torah</title>
+    <link href="https://fonts.googleapis.com/css2?family=Asimovian&display=swap" rel="stylesheet">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #2a2a2a;
+            --accent: #c9aa71;
+            --text: #e8e8e8;
+            --text-dim: #888;
+            --border: #333;
+            --glow: rgba(201, 170, 113, 0.3);
+        }
+        
+        body {
+  font-family: "Asimovian", sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+        
+        .reveal-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease;
+        }
+        
+        .reveal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 48px;
+        }
+        
+        .reveal-logo {
+            max-width: 200px;
+            height: auto;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+        
+        .reveal-logo:hover {
+            opacity: 1;
+        }
+        
+        .reveal-trigger {
+            background: none;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 16px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .reveal-trigger:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px var(--glow);
+        }
+        
+        .main-app {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .main-app.active {
+            opacity: 1;
+        }
+        
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent);
+        }
+        
+        .content-wrapper {
+            margin-top: 60px;
+        }
+        
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, var(--accent) 0%, #ddc789 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-dim);
+            margin-bottom: 48px;
+            font-weight: 300;
+            line-height: 1.4;
+        }
+        
+        .artifact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .artifact-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 32px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .artifact-card:hover {
+            background: rgba(42, 42, 42, 0.8);
+            border-color: var(--accent);
+        }
+        
+        .artifact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(201, 170, 113, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .artifact-card:hover::before {
+            left: 100%;
+        }
+        
+        .artifact-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .artifact-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        .artifact-desc {
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+        
+        .genesis-section {
+            padding: 120px 40px;
+            background: var(--primary);
+            border-top: 1px solid var(--border);
+        }
+        
+        .genesis-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        
+        .genesis-info {
+            
+        }
+        
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        
+        .genesis-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+        
+        .genesis-description {
+            font-size: 16px;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .wallet-display {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wallet-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .wallet-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .wallet-status {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .wallet-address {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 16px;
+            border: 1px solid var(--border);
+            word-break: break-all;
+            margin-bottom: 24px;
+        }
+        
+        .wallet-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .fragments-section {
+            padding: 120px 40px;
+            background: var(--secondary);
+            border-top: 1px solid var(--border);
+        }
+        
+        .fragments-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .fragments-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .fragments-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+        
+        .fragments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+        }
+        
+        .fragment-card {
+            background: var(--primary);
+            border: 1px solid var(--border);
+            padding: 32px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .fragment-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+        
+        .fragment-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .fragment-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+        
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .floating-char {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: rgba(201, 170, 113, 0.1);
+            animation: float-up 25s linear infinite;
+        }
+        
+        @keyframes float-up {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-header { padding: 0 20px; }
+            .hero-title { font-size: 48px; }
+            .hero-subtitle { font-size: 18px; }
+            .artifact-grid { grid-template-columns: 1fr; }
+            .genesis-container { grid-template-columns: 1fr; gap: 40px; }
+            .genesis-title { font-size: 36px; }
+            .fragments-title { font-size: 36px; }
+            .fragments-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal-screen" id="revealScreen">
+        <div class="reveal-content">
+            <img src="Progetto senza titolo (3).png" alt="TOKEN OF JEWS" class="reveal-logo">
+            <button class="reveal-trigger" id="revealTrigger">Access $TORAH</button>
+        </div>
+    </div>
+    
+    <div class="main-app" id="mainApp">
+        <div class="floating-elements" id="floatingElements"></div>
+        
+        <header class="nav-header">
+            <div class="logo">Token of Torah</div>
+            <nav class="nav-links">
+                <a href="#" class="nav-link">Archive</a>
+                <a href="#" class="nav-link">Genesis</a>
+                <a href="#" class="nav-link">Fragments</a>
+                <a href="#" class="nav-link">Protocol</a>
+            </nav>
+        </header>
+        
+        <div class="content-wrapper">
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">DIGITAL ARTIFACT</h1>
+                    <p class="hero-subtitle">An encrypted repository of ancient knowledge, compiled into immutable code. Each fragment contains traces of forgotten wisdom.</p>
+                    
+                    <div class="artifact-grid">
+                        <div class="artifact-card">
+                            <div class="artifact-number">Fragment 01</div>
+                            <h3 class="artifact-title">Genesis Protocol</h3>
+                            <p class="artifact-desc">Primary wallet initialization and core distribution mechanism.</p>
+                        </div>
+                        <div class="artifact-card">
+                            <div class="artifact-number">Fragment 02</div>
+                            <h3 class="artifact-title">Sacred Algorithms</h3>
+                            <p class="artifact-desc">Encoded patterns derived from ancient computational methods.</p>
+                        </div>
+                        <div class="artifact-card">
+                            <div class="artifact-number">Fragment 03</div>
+                            <h3 class="artifact-title">Network Topology</h3>
+                            <p class="artifact-desc">Distributed architecture mirroring historical text structures.</p>
+                        </div>
+                        <div class="artifact-card">
+                            <div class="artifact-number">Fragment 04</div>
+                            <h3 class="artifact-title">Consensus Mechanism</h3>
+                            <p class="artifact-desc">Validation protocols based on interpretative traditions.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="genesis-section">
+                <div class="genesis-container">
+                    <div class="genesis-info">
+                        <div class="section-label">Primary Repository</div>
+                        <h2 class="genesis-title">The Genesis Wallet</h2>
+                        <p class="genesis-description">
+                            The primary allocation address serves as the foundational node for all token distribution. 
+                            This immutable vault contains the original supply, programmatically distributed according 
+                            to predetermined protocols encoded within the smart contract architecture.
+                        </p>
+                    </div>
+                    
+                    <div class="wallet-display">
+                        <div class="wallet-header">
+                            <div class="wallet-label">Primary Address</div>
+                            <div class="wallet-status"></div>
+                        </div>
+                        
+                        <div class="wallet-address">
+                            HERE
+                        </div>
+                        
+                        <div class="wallet-stats">
+                            <div class="stat">
+                                <div class="stat-value">1,000,000</div>
+                                <div class="stat-label">Total Supply</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">ACTIVE</div>
+                                <div class="stat-label">Status</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="fragments-section">
+                <div class="fragments-container">
+                    <div class="fragments-header">
+                        <div class="section-label">Decoded Fragments</div>
+                        <h2 class="fragments-title">Archive Excerpts</h2>
+                    </div>
+                    
+                    <div class="fragments-grid">
+                        <div class="fragment-card">
+                            <div class="fragment-id">FRAGMENT_001</div>
+                            <div class="fragment-content">
+                                "The distributed ledger mirrors the structure of ancient commentary systems. 
+                                Each transaction validates not just value transfer, but interpretative consensus 
+                                across the network topology."
+                            </div>
+                        </div>
+                        
+                        <div class="fragment-card">
+                            <div class="fragment-id">FRAGMENT_002</div>
+                            <div class="fragment-content">
+                                "Immutable records preserve knowledge across epochs. What was once written 
+                                in scrolls now exists as cryptographic proof, secured by mathematical 
+                                consensus rather than physical custody."
+                            </div>
+                        </div>
+                        
+                        <div class="fragment-card">
+                            <div class="fragment-id">FRAGMENT_003</div>
+                            <div class="fragment-content">
+                                "The network validates through collective interpretation. Each node contributes 
+                                to the canonical version, creating a digital tradition that spans beyond 
+                                individual understanding."
+                            </div>
+                        </div>
+                        
+                        <div class="fragment-card">
+                            <div class="fragment-id">FRAGMENT_004</div>
+                            <div class="fragment-content">
+                                "Smart contracts execute ancient logic through modern computation. The 
+                                algorithms encode centuries of wisdom into programmable, self-executing 
+                                protocols."
+                            </div>
+                        </div>
+                        
+                        <div class="fragment-card">
+                            <div class="fragment-id">FRAGMENT_005</div>
+                            <div class="fragment-content">
+                                "Token distribution follows predetermined patterns derived from historical 
+                                allocation methods. Each holder becomes a custodian of both digital assets 
+                                and encoded knowledge."
+                            </div>
+                        </div>
+                        
+                        <div class="fragment-card">
+                            <div class="fragment-id">FRAGMENT_006</div>
+                            <div class="fragment-content">
+                                "The protocol preserves authenticity through cryptographic signatures. 
+                                What once required physical verification now achieves immutable proof 
+                                through mathematical certainty."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // Reveal mechanism
+        const revealScreen = document.getElementById('revealScreen');
+        const revealTrigger = document.getElementById('revealTrigger');
+        const mainApp = document.getElementById('mainApp');
+        
+        revealTrigger.addEventListener('click', () => {
+            revealScreen.style.opacity = '0';
+            setTimeout(() => {
+                revealScreen.style.display = 'none';
+                mainApp.classList.add('active');
+                initFloatingElements();
+            }, 800);
+        });
+        
+        // Floating elements
+        const symbols = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר', 'ש', 'ת', '0x', 'SOL', '₿', '⟠', '◊', '▲', '●', '◆'];
+        
+        function createFloatingElement() {
+            const element = document.createElement('div');
+            element.className = 'floating-char';
+            element.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            element.style.left = Math.random() * 100 + '%';
+            element.style.animationDelay = Math.random() * 2 + 's';
+            element.style.animationDuration = (20 + Math.random() * 10) + 's';
+            
+            document.getElementById('floatingElements').appendChild(element);
+            
+            setTimeout(() => {
+                element.remove();
+            }, 30000);
+        }
+        
+        function initFloatingElements() {
+            setInterval(createFloatingElement, 3000);
+        }
+        
+        // Fragment card interactions
+        const fragmentCards = document.querySelectorAll('.fragment-card');
+        fragmentCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Add click effect
+                card.style.transform = 'translateY(-4px) scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = 'translateY(-4px) scale(1)';
+                }, 100);
+            });
+        });
+        
+        // Artifact card interactions
+        const artifactCards = document.querySelectorAll('.artifact-card');
+        artifactCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Add click effect
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
